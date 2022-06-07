@@ -2,10 +2,10 @@ mod checks;
 mod logs;
 mod contants;
 mod functions;
-
 use contants::*;
 
 use clap::Parser;
+
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
 pub struct Args {
@@ -47,7 +47,7 @@ pub struct Args {
     task_server_ips: String,
 
     #[clap(short = 'N', long)]
-    upstream_tyep: String,
+    upstream_type: String,
 
     #[clap(short='v', long, takes_value = false, forbid_empty_values = false, required = false, default_value= "false")]
     vars_list: String,
@@ -74,7 +74,7 @@ pub struct Args {
     data_port: usize,
 
     #[clap(short = 'V', long)]
-    btsvr_thrift_port : String,
+    btsvr_thrift_port : usize,
 
     #[clap(short = 'B', long)]
     bt_port: usize,
@@ -89,10 +89,10 @@ pub struct Args {
     tracker_port: usize,
 }
 
-
 fn main() {
     let args = Args::parse();
-    contants::load_contants(args);
+    let c = contants::load_contants(&args);
+
 }
 
 
@@ -101,6 +101,8 @@ mod tests {
     use super::*;
     #[test]
     fn test_args () {
-        todo!();
+        let a = String::from("a");
+        let c:Vec<&str> = a.split(",").collect();
+        println!("{:?}", c)
     }
 }

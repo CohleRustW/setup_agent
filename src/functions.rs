@@ -9,7 +9,12 @@ pub fn ipv4_transport_to_vec (ip: &str) -> Result<Vec<u8>, std::num::ParseIntErr
 	Ok(ip_u8_vec)
 }
 
-pub fn str_transport_to_bool(s: &str) -> Result<bool, std::num::ParseIntError> {
+pub fn str_transport_to_bool(s: &str) -> Result<bool, std::str::ParseBoolError> {
 	let result: bool = s.parse::<bool>()?;
-	result
+	Ok(result)
+}
+
+pub fn str_transport_to_vec<'a>(s: &'a str) -> Result<Vec<&'a str>, Box<dyn std::error::Error>> {
+	let result: Vec<&'a str> = s.split(",").collect();
+	Ok(result)
 }
