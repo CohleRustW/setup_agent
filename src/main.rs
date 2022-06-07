@@ -1,5 +1,9 @@
 mod checks;
 mod logs;
+mod contants;
+mod functions;
+
+use contants::*;
 
 use clap::Parser;
 #[derive(Parser, Debug)]
@@ -88,8 +92,7 @@ pub struct Args {
 
 fn main() {
     let args = Args::parse();
-    println!("{:?}", args);
-    println!("Hello {}!", args.upgrade)
+    contants::load_contants(args);
 }
 
 

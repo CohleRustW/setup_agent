@@ -8,3 +8,8 @@ pub fn ipv4_transport_to_vec (ip: &str) -> Result<Vec<u8>, std::num::ParseIntErr
 	}
 	Ok(ip_u8_vec)
 }
+
+pub fn str_transport_to_bool(s: &str) -> Result<bool, std::num::ParseIntError> {
+	let result: bool = s.parse::<bool>()?;
+	result
+}
