@@ -10,7 +10,7 @@ pub static CONSTANTS: Constants = Constants {
 	conn_timeout_time: 5
 };
 
-
+#[allow(dead_code)]
 pub struct RuntimeEnv<'a> {
     lan_eth_ip: &'a str,
     cloud_id: usize,
