@@ -24,3 +24,7 @@
     - ai6
 	- aix7
   - Macos
+
+
+#### 平台类型支持
+1. AIX: [支持计划评估中](https://community.ibm.com/community/user/power/communities/community-home/digestviewer/viewthread?GroupId=6211&MessageKey=b60b78ac-d482-4565-9db9-75690cce06f8&CommunityKey=10c1d831-47ee-4d92-a138-b03f7896f7c9&ReturnUrl=%2Fcommunity%2Fuser%2Fpower%2Fcommunities%2Fcommunity-home%2Fdigestviewer%3FListKey%3Daf5415f8-d8d8-4ac4-b3cb-08a8da184054)

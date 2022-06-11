@@ -89,10 +89,13 @@ pub struct Args {
     tracker_port: usize,
 }
 
+// #[tokio::main]
 fn main() {
     let args = Args::parse();
-    let c = contants::load_contants(&args);
 
+    if let Ok(envs) = contants::load_contants(&args) {
+        println!("{:#?}", envs.runtime_env.bt_port);
+    }
 }
 
 
