@@ -1,7 +1,5 @@
 use regex::Regex;
-use std::time::Duration;
-use super::functions::str_transport_to_vec;
-use reqwest::{blocking, ClientBuilder};
+use reqwest::blocking;
 use std::collections::HashMap;
 use super::contants::*;
 
@@ -10,7 +8,7 @@ pub fn block_check_report_url_reachable(url: &str) ->  Result<(), reqwest::Error
     map.insert("task_id", NODE_TEST_HEADER);
     map.insert("token", NODE_TEST_HEADER);
     map.insert("logs", NODE_TEST_HEADER);
-    let client = reqwest::blocking::Client::builder().timeout(CONN_TIME_OUT).build()?;
+    let client = blocking::Client::builder().timeout(CONN_TIME_OUT).build()?;
     client.post(url).json(&map).send()?;
     // TODO: 404 check
     Ok(())

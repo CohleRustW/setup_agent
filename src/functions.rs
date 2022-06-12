@@ -17,7 +17,6 @@ pub fn str_transport_to_bool(s: &str) -> Result<bool, std::str::ParseBoolError> 
     Ok(result)
 }
 
-#[allow(dead_code)]
 pub fn str_transport_to_vec<'a>(s: &'a str) -> Result<Vec<&'a str>, Box<dyn std::error::Error>> {
     let result: Vec<&'a str> = s.split(",").collect();
     Ok(result)

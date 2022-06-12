@@ -6,22 +6,9 @@ use crate::checks::{block_check_report_url_reachable, vaild_calllback_url__token
 use std::time::Duration;
 
 pub static REPORT_LOG_URL: &'static str = "report_log";
-pub static CONN_TIME_OUT: Duration = Duration::from_secs(5);
+pub static CONN_TIME_OUT: Duration = Duration::from_secs(1);
 pub static NODE_TEST_HEADER: &'static str = "NodeManScriptTest";
-
-pub struct Constants {
-	pub conn_timeout_time: usize,
-    pub report_log_url:  &'static str,
-}
-
-impl Constants {
-    pub fn new (&self) -> Self {
-        Constants {
-            conn_timeout_time: CONN_TIME_OUT,
-            report_log_url: REPORT_LOG_URL,
-        }
-    }
-}
+pub static NODE_LOG_HEADER: &'static str = "nm.setup_agent.";
 
 
 #[allow(dead_code)]
@@ -59,7 +46,7 @@ pub struct RuntimeEnv<'a> {
 pub struct Config<'b>{
     pub runtime_env: RuntimeEnv<'b>,
     pub check_error_msg: Vec<String>,
-    pub valid_backenc_url: bool
+    pub valid_backend_url: bool
 }
 
 
@@ -82,6 +69,7 @@ pub fn load_contants<'b> (args: &'b Args)  -> Result<Config<'b>, Box<dyn std::er
         }
 
         if let Ok(result) = functions::str_transport_to_vec(&args.bk_file_server_ips) {
+            println!("result: {:?}", result);
             if result.len() == 0 {
                 args_err_logs.push("Args bk_file_server_ips param is empty.".to_string());
             }
@@ -89,34 +77,27 @@ pub fn load_contants<'b> (args: &'b Args)  -> Result<Config<'b>, Box<dyn std::er
             args_err_logs.push("Args bk_file_server_ips param is not string.".to_string());
         }
 
-        if let Ok(result) = functions::str_transport_to_vec(&args.bk_file_server_ips) {
-            if result.len() == 0 {
-                args_err_logs.push(format!("Args bk_file_server_ips param is empty."));
-            } else {
-                args_err_logs.push(format!("Args bk_file_server_ips param is not string"));
-            }
-        }
         if let Ok(result) = functions::str_transport_to_vec(&args.data_server_ips) {
             if result.len() == 0 {
                 args_err_logs.push(format!("Args data_server_ips param is empty."));
-            } else {
-                args_err_logs.push(format!("Args data_server_ips param is not string"));
             }
+        } else {
+                args_err_logs.push(format!("Args data_server_ips param is not string"));
         }
         if let Ok(result) = functions::str_transport_to_vec(&args.task_server_ips) {
             if result.len() == 0 {
                 args_err_logs.push(format!("Args task_server_ips param is empty."));
-            } else {
-                args_err_logs.push(format!("Args task_server_ips param is not string"));
             }
+        } else {
+                args_err_logs.push(format!("Args task_server_ips param is not string"));
         }
 
         let report_log_url: String = format!("{}/{}", &args.callback_url, REPORT_LOG_URL);
-        let mut _valid_backenc_url: bool = true;
+        let mut valid_backend_url: bool = true;
         if let Err(err) = block_check_report_url_reachable(&report_log_url) {
             args_err_logs.push(format!("report_log_url is invalid, please check it\n"));
             args_err_logs.push(format!("Error mgs -> {:?}\n", err));
-            _valid_backenc_url = false;
+            valid_backend_url = false;
         }
 
         let remove: bool = functions::str_transport_to_bool(&args.remove)?;
@@ -153,7 +134,7 @@ pub fn load_contants<'b> (args: &'b Args)  -> Result<Config<'b>, Box<dyn std::er
         Ok(Config {
             runtime_env: runtime_env,
             check_error_msg: args_err_logs,
-            valid_backenc_url: _valid_backenc_url,
+            valid_backend_url: valid_backend_url,
         })
 }
 

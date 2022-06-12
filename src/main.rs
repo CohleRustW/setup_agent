@@ -1,10 +1,14 @@
+mod utils;
 mod checks;
 mod logs;
 mod contants;
 mod functions;
 use contants::*;
-
+use once_cell::sync::OnceCell;
+use logs::Log;
 use clap::Parser;
+
+static INSTANCE: OnceCell<String> = OnceCell::new();
 
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
@@ -93,10 +97,20 @@ pub struct Args {
 fn main() {
     let args = Args::parse();
 
-    if let Ok(envs) = contants::load_contants(&args) {
-        println!("{:#?}", envs.runtime_env.bt_port);
+    if let Ok(config) = contants::load_contants(&args) {
+        println!("{:?}", config);
+        if ! config.valid_backend_url {
+            for log in config.check_error_msg.iter() {
+                if log.len() > 0 {
+                    println!("{}", log);
+                }
+            }
+        }
+        INSTANCE.set(config.runtime_env.tmp_dir.to_string()).unwrap();
+        println!("{:?}", INSTANCE);
     }
 }
+
 
 
 #[cfg(test)]
