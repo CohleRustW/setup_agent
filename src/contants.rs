@@ -10,6 +10,36 @@ pub static CONN_TIME_OUT: Duration = Duration::from_secs(1);
 pub static NODE_TEST_HEADER: &'static str = "NodeManScriptTest";
 pub static NODE_LOG_HEADER: &'static str = "nm.setup_agent.";
 
+pub trait PathSuffix {
+    fn path_suffix() -> String;
+    fn default_tmpdir() -> String;
+}
+
+pub struct Windows;
+pub struct Unix;
+impl PathSuffix for Windows{
+    fn path_suffix() -> String {
+        "\\".to_string()
+    }
+    fn default_tmpdir() -> String {
+        "C:\\tmp".to_string()
+    }
+}
+
+impl PathSuffix for Unix{
+    fn path_suffix() -> String {
+        "/".to_string()
+    }
+    fn default_tmpdir() -> String {
+        "/tmp".to_string()
+    }
+}
+pub static INFO: &'static str = "INFO";
+pub static WARN: &'static str = "WARN";
+pub static ERROR: &'static str = "ERROR";
+pub static DEBUG: &'static str = "DEBUG";
+
+
 
 #[allow(dead_code)]
 #[derive(Debug)]
@@ -138,3 +168,13 @@ pub fn load_contants<'b> (args: &'b Args)  -> Result<Config<'b>, Box<dyn std::er
         })
 }
 
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_tmp () {
+        todo!()
+    }
+}

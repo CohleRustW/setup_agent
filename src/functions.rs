@@ -1,4 +1,6 @@
+// use crate::utils::contants::RANDOM_CHARS;
 use chrono::prelude::*;
+// use random_string::generate;
 
 #[allow(dead_code)]
 pub fn ipv4_transport_to_vec(ip: &str) -> Result<Vec<u8>, std::num::ParseIntError> {
@@ -27,3 +29,8 @@ pub fn local_time_format() -> String {
     let format_time = local.format("%F %T").to_string();
     format_time
 }
+
+// pub fn random_string () -> String {
+//     let c = generate(10, RANDOM_CHARS);
+//     c
+// }

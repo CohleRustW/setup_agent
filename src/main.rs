@@ -1,14 +1,16 @@
-mod utils;
+pub mod utils;
 mod checks;
 mod logs;
 mod contants;
 mod functions;
 use contants::*;
 use once_cell::sync::OnceCell;
-use logs::Log;
 use clap::Parser;
 
-static INSTANCE: OnceCell<String> = OnceCell::new();
+
+static TMP: OnceCell<String> = OnceCell::new();
+static TmpFileName: OnceCell<String> = OnceCell::new();
+static CallBackUrl: OnceCell<String> = OnceCell::new();
 
 #[derive(Parser, Debug)]
 #[clap(author, version, about, long_about = None)]
@@ -106,11 +108,16 @@ fn main() {
                 }
             }
         }
-        INSTANCE.set(config.runtime_env.tmp_dir.to_string()).unwrap();
-        println!("{:?}", INSTANCE);
+        set_global_env(config);
     }
 }
 
+fn set_global_env (config: Config) {
+    // let tmp_file_name = random_string();
+    // TmpFileName.set(tmp_file_name.clone()).unwrap();
+    TMP.set(config.runtime_env.tmp_dir.to_string()).unwrap();
+    CallBackUrl.set(config.runtime_env.callback_url.to_string()).unwrap();
+}
 
 
 #[cfg(test)]

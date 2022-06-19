@@ -1,10 +1,12 @@
 use std::fs::{remove_file, File, create_dir_all, read_dir};
 use std::path;
-use super::utils::RANDOM_CHARS;
+use super::contants::RANDOM_CHARS;
 use random_string::generate;
 use regex::Regex;
-use crate::contants::NODE_LOG_HEADER;
+use crate::contants::{NODE_LOG_HEADER, Unix, PathSuffix};
 use std::io::Read;
+use crate::utils::exception::NodeError;
+use crate::TMP;
 
 #[derive(Debug)]
 pub struct Tmp {
@@ -12,11 +14,17 @@ pub struct Tmp {
 }
 
 impl Tmp {
-    pub fn new(tmp_dir: &str) -> Tmp {
-        Tmp {
-            path: String::from(tmp_dir),
+    pub fn new () -> Tmp {
+        match TMP.get() {
+            Some(tmp_dir) => Tmp {
+                path: tmp_dir.to_string()
+            },
+            None => Tmp {
+                path: Unix::default_tmpdir()
+            }
         }
     }
+
     pub fn mktmp(&self)  -> String {
     // fn mktmp(&self) -> std::io::Result<std::fs::File> {
         let tmp_path = path::Path::new(&self.path);
@@ -25,7 +33,7 @@ impl Tmp {
         }
         let random_string = format!("{}{}", NODE_LOG_HEADER, self.range_file_name());
         let range_tmp_file = tmp_path.join(&random_string);
-        let abs_path_tmp = format!("{}{}", self.path, &random_string);
+        let abs_path_tmp = format!("{}/{}", self.path, &random_string);
         if ! range_tmp_file.exists() {
             if let Err(_e) = File::create(range_tmp_file) {
                 println!(" create tmp file -> {} failed -> {}", abs_path_tmp, _e);
@@ -35,7 +43,7 @@ impl Tmp {
     }
     pub fn range_file_name(&self) -> String {
         generate(10, RANDOM_CHARS)
-   }
+    }
 
    pub fn clean(&self) {
        let reg = format!("^{}.*{}.*", self.path ,NODE_LOG_HEADER);
@@ -58,8 +66,9 @@ impl Tmp {
        }
    }
 
-   pub fn write(&self, tmp_file: &str, log: &str) {
-       if let Err(e) = std::fs::write(tmp_file, log) {
+   pub fn write(&self, log: &str) {
+       let file_name = &self.mktmp();
+       if let Err(e) = std::fs::write(file_name, log) {
               println!("write log failed. mgs -> {:?}", e);
        }
    }
@@ -85,16 +94,7 @@ mod tests {
     }
 
     #[test]
-    fn test_tmp_dir (){
-        let tmp = Tmp::new("/tmp");
-        let tmp_file = tmp.mktmp();
-        Tmp::new("/tmp").clean();
-    }
-
-    #[test]
     fn test_log () {
-        use crate::logs::Logger;
-        let a = "test";
-        let log = Logger::new();
+        todo!()
     }
 }

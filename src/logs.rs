@@ -3,6 +3,8 @@ use std::cmp::min;
 use reqwest::{blocking, StatusCode, Response};
 use std::collections::HashMap;
 use std::time::SystemTime;
+use crate::contants::{INFO, ERROR, WARN, DEBUG};
+use crate::utils::tmp::Tmp;
 
 
 pub async fn single_report_log<'a>(level: &'a str, step: &'a str, log: &'a str) -> HashMap<&'a str, String> {
@@ -35,53 +37,52 @@ fn report_log(url: &str, task_id: &str, token: &str, logs: &str) ->  Result<(), 
     Ok(())
 }
 
-
+pub struct Print {
+    tmp: Tmp,
+}
+pub struct Report;
 pub trait Logger {
     // fn new<T, R>(i: T + PrintAndLog) -> TimeLogFormat + PrintAndLog;
-    fn new(&self, tmp_dir: String, tmp_file_name: String) -> Self;
+    fn new() -> Print;
     fn info(&self, msg: &str) -> String;
     fn warn(&self, msg: &str)-> String;
     fn error(&self, msg: &str) -> String;
     fn debug(&self, msg: &str) -> String;
 }
 
-#[derive(Debug)]
-pub struct Log {
-    info: String,
-    warn: String,
-    error: String,
-    debug: String,
-    tmp_dir: String,
-}
 
+impl Logger for Print {
 
-impl Log {
-    pub fn new (tmp_dir: String) -> Self {
-        Log {
-            info: String::from("INFO"),
-            warn: String::from("WARNING"),
-            error: String::from("ERROR"),
-            debug: String::from("DEBUG"),
-            tmp_dir: tmp_dir,
+    fn new() -> Self {
+        Print {
+            tmp: Tmp::new(),
         }
     }
-    pub fn info(&self, msg: &str) -> String {
-        let log_msg = format!("{} {} {}", local_time_format(), &self.info, msg);
+    fn info(&self, msg: &str) -> String {
+        let log_msg = format!("{} {} {}", local_time_format(), INFO, msg);
+        &self.tmp.write(&log_msg);
+        println!("{}", log_msg);
         log_msg
     }
-    pub fn error(&self, msg: &str) -> String {
-        let log_msg = format!("{} {} {}", local_time_format(), &self.error, msg);
+    fn error(&self, msg: &str) -> String {
+        let log_msg = format!("{} {} {}", local_time_format(), ERROR, msg);
+        &self.tmp.write(&log_msg);
+        println!("{}", log_msg);
         log_msg
     }
-    pub fn debug(&self, msg: &str) -> String {
-        let log_msg = format!("{} {} {}", local_time_format(), &self.debug, msg);
+    fn debug(&self, msg: &str) -> String {
+        let log_msg = format!("{} {} {}", local_time_format(), DEBUG, msg);
+        &self.tmp.write(&log_msg);
         log_msg
     }
-    pub fn warn(&self, msg: &str) -> String {
-        let log_msg = format!("{} {} {}", local_time_format(), &self.warn, msg);
+    fn warn(&self, msg: &str) -> String {
+        let log_msg = format!("{} {} {}", local_time_format(), WARN, msg);
+        &self.tmp.write(&log_msg);
+        println!("{}", log_msg);
         log_msg
     }
 }
+
 
 #[cfg(test)]
 mod tests {
@@ -91,5 +92,20 @@ mod tests {
         if let Ok(timestamp) = std::time::SystemTime::now().duration_since(SystemTime::UNIX_EPOCH){
             println!("{}", timestamp.as_secs());
         }
+    }
+    #[test]
+    #[warn(deprecated)]
+    fn test_log_info () {
+        let print = Print::new();
+        use std::thread;
+        thread::sleep_ms(1000);
+        print.info("test");
+        thread::sleep_ms(1000);
+        print.info("test");
+        thread::sleep_ms(1000);
+        print.info("test");
+        print.info("test");
+        let t = Tmp::new();
+        t.clean()
     }
 }
