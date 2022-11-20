@@ -113,8 +113,8 @@ fn main() {
 }
 
 fn set_global_env (config: Config) {
-    // let tmp_file_name = random_string();
-    // TmpFileName.set(tmp_file_name.clone()).unwrap();
+    let global_random_string = functions::random_string();
+    TmpFileName.set(global_random_string).unwrap();
     TMP.set(config.runtime_env.tmp_dir.to_string()).unwrap();
     CallBackUrl.set(config.runtime_env.callback_url.to_string()).unwrap();
 }

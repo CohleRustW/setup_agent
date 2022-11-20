@@ -12,6 +12,9 @@
   - std::net::TcpStream
   - 应该考虑下IPV6的场景适配
   - 这个方式应该适用于所有的操作系统
-  
+
+3. 全局环境变量
+  - lazi_static 
+
 
 

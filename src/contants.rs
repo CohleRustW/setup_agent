@@ -9,6 +9,7 @@ pub static REPORT_LOG_URL: &'static str = "report_log";
 pub static CONN_TIME_OUT: Duration = Duration::from_secs(1);
 pub static NODE_TEST_HEADER: &'static str = "NodeManScriptTest";
 pub static NODE_LOG_HEADER: &'static str = "nm.setup_agent.";
+pub static RANDOM_CHARS: &'static str = "AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz012346789";
 
 pub trait PathSuffix {
     fn path_suffix() -> String;
@@ -38,7 +39,6 @@ pub static INFO: &'static str = "INFO";
 pub static WARN: &'static str = "WARN";
 pub static ERROR: &'static str = "ERROR";
 pub static DEBUG: &'static str = "DEBUG";
-
 
 
 #[allow(dead_code)]
@@ -177,4 +177,5 @@ mod tests {
     fn test_tmp () {
         todo!()
     }
+
 }

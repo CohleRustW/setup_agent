@@ -5,6 +5,7 @@ use std::collections::HashMap;
 use std::time::SystemTime;
 use crate::contants::{INFO, ERROR, WARN, DEBUG};
 use crate::utils::tmp::Tmp;
+use crate::Args;
 
 
 pub async fn single_report_log<'a>(level: &'a str, step: &'a str, log: &'a str) -> HashMap<&'a str, String> {
@@ -40,7 +41,12 @@ fn report_log(url: &str, task_id: &str, token: &str, logs: &str) ->  Result<(), 
 pub struct Print {
     tmp: Tmp,
 }
-pub struct Report;
+
+pub struct Report {
+    tmp: Tmp,
+    args: Args,
+}
+
 pub trait Logger {
     // fn new<T, R>(i: T + PrintAndLog) -> TimeLogFormat + PrintAndLog;
     fn new() -> Print;
@@ -65,10 +71,10 @@ impl Logger for Print {
         log_msg
     }
     fn error(&self, msg: &str) -> String {
-        let log_msg = format!("{} {} {}", local_time_format(), ERROR, msg);
-        &self.tmp.write(&log_msg);
-        println!("{}", log_msg);
-        log_msg
+        let _log_msg = format!("{} {} {}", local_time_format(), ERROR, msg);
+        &self.tmp.write(&_log_msg);
+        println!("{}", _log_msg);
+        _log_msg
     }
     fn debug(&self, msg: &str) -> String {
         let log_msg = format!("{} {} {}", local_time_format(), DEBUG, msg);
@@ -96,16 +102,40 @@ mod tests {
     #[test]
     #[warn(deprecated)]
     fn test_log_info () {
+        use crate::contants::NODE_LOG_HEADER;
+        use std::time::Duration;
+        let sleep_time: Duration = Duration::from_secs(1);
+        use regex::Regex;
+        use std::fs::read_dir;
         let print = Print::new();
-        use std::thread;
-        thread::sleep_ms(1000);
-        print.info("test");
-        thread::sleep_ms(1000);
-        print.info("test");
-        thread::sleep_ms(1000);
-        print.info("test");
-        print.info("test");
         let t = Tmp::new();
-        t.clean()
+        t.clean();
+        use std::thread;
+        thread::sleep(sleep_time);
+        print.info("test");
+        thread::sleep(sleep_time);
+        print.info("test");
+        thread::sleep(sleep_time);
+        print.info("test");
+        print.info("test");
+        let tmp_file = "/tmp";
+        let reg = format!("^{}.*{}.*", "/tmp", NODE_LOG_HEADER);
+        let tmp_file_regex: Regex = Regex::new(&reg.to_string()).unwrap();
+        let mut macth_file_vec = Vec::new();
+        match read_dir(&tmp_file) {
+            Ok(paths) => {
+                for file in paths {
+                    if let Ok(f) = file {
+                        if tmp_file_regex.is_match(&f.path().to_string_lossy()) {
+                            macth_file_vec.push(f.path().to_string_lossy().to_string());
+                        }
+                    }
+                }
+            }
+            Err(_) => {
+                println!("Couldn't read dir");
+            }
+        }
+        assert_eq!(macth_file_vec.len(), 1);
     }
 }

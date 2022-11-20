@@ -1,12 +1,12 @@
 use std::fs::{remove_file, File, create_dir_all, read_dir};
 use std::path;
-use super::contants::RANDOM_CHARS;
-use random_string::generate;
 use regex::Regex;
-use crate::contants::{NODE_LOG_HEADER, Unix, PathSuffix};
+use crate::contants::{NODE_LOG_HEADER, Unix, PathSuffix, RANDOM_CHARS};
 use std::io::Read;
 use crate::utils::exception::NodeError;
-use crate::TMP;
+use random_string::generate;
+use crate::{TMP, TmpFileName};
+
 
 #[derive(Debug)]
 pub struct Tmp {
@@ -31,7 +31,17 @@ impl Tmp {
         if let  Err(e) = create_dir_all(tmp_path) {
             println!("{}", e);
         }
-        let random_string = format!("{}{}", NODE_LOG_HEADER, self.range_file_name());
+        let random_string: String;
+        match TmpFileName.get(){
+            Some(s) => {
+                random_string = s.to_string();
+            },
+            None => {
+                random_string = generate(10, RANDOM_CHARS);
+                TmpFileName.set(random_string.clone());
+            }
+        }
+        let random_string = format!("{}{}", NODE_LOG_HEADER, random_string);
         let range_tmp_file = tmp_path.join(&random_string);
         let abs_path_tmp = format!("{}/{}", self.path, &random_string);
         if ! range_tmp_file.exists() {
